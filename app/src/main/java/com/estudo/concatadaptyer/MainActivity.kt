@@ -2,10 +2,39 @@ package com.estudo.concatadaptyer
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.ConcatAdapter
+import com.estudo.concatadaptyer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
+    private lateinit var programmingLanguagesAdapter: ProgrammingLanguagesAdapter
+    private lateinit var tipsAdapter: TipsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        programmingLanguagesAdapter = ProgrammingLanguagesAdapter()
+        tipsAdapter = TipsAdapter().apply {
+            gotItItemClickListener = {
+                onDismissTips()
+            }
+        }
+
+        binding.recyclerFeed.adapter = ConcatAdapter(tipsAdapter, programmingLanguagesAdapter)
+
+        programmingLanguagesAdapter.submitList(programmingLanguages)
+        tipsAdapter.submitList(tips)
+    }
+
+    private fun onDismissTips() {
+        tipsAdapter.notifyItemRemoved(0)
     }
 }
